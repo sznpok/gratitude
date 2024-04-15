@@ -6,7 +6,10 @@ import 'package:gratitude_app/utils/size.dart';
 import 'package:gratitude_app/utils/theme.dart';
 
 class CustomListCard extends StatelessWidget {
-  const CustomListCard({super.key});
+  const CustomListCard({super.key, required this.title, required this.image});
+
+  final String title;
+  final String image;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,7 @@ class CustomListCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                "I am so sorry and gratefull I am so sorry and gratefull that i had a productive white board session with Sijasd jfdlskjflk",
+                title,
                 maxLines: 3,
                 textAlign: TextAlign.justify,
                 overflow: TextOverflow.ellipsis,
@@ -39,8 +42,7 @@ class CustomListCard extends StatelessWidget {
               child: CachedNetworkImage(
                 fit: BoxFit.cover,
                 height: SizeConfig.screenHeight! * 0.12,
-                imageUrl:
-                    "https://img.freepik.com/free-vector/gradient-orange-violet-abstract-background_23-2148453876.jpg?w=1380&t=st=1713165456~exp=1713166056~hmac=ad5b8e78ab87778ae8831e71f07df4402e7bd63ce66ae6687d93411afb367469",
+                imageUrl: image,
               ),
             ),
           ),

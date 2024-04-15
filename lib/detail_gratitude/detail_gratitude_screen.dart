@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -122,8 +123,8 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                   }
                 },
                 child: _image == null
-                    ? Image.network(
-                        widget.image!,
+                    ? CachedNetworkImage(
+                        imageUrl: widget.image!,
                         fit: BoxFit.cover,
                         height: SizeConfig.screenHeight! * 0.5,
                         width: SizeConfig.screenWidth!,

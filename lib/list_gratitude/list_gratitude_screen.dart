@@ -17,6 +17,11 @@ class ListGratitudeScreen extends StatefulWidget {
 class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
   bool isLoading = false;
 
+  final String title =
+      "I am so sorry and gratefull I am so sorry and gratefull that i had a productive white board session with Sijasd jfdlskjflk";
+  final String image =
+      "https://img.freepik.com/free-vector/gradient-orange-violet-abstract-background_23-2148453876.jpg?w=1380&t=st=1713165456~exp=1713166056~hmac=ad5b8e78ab87778ae8831e71f07df4402e7bd63ce66ae6687d93411afb367469";
+
   @override
   void initState() {
     super.initState();
@@ -47,7 +52,23 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                 SizeConfig.padding! * 0.01,
               ),
               itemBuilder: (context, i) {
-                return const CustomListCard();
+                return GestureDetector(
+                  child: CustomListCard(
+                    title: title,
+                    image: image,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailGratitudeScreen(
+                          title: title,
+                          image: image,
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ),
