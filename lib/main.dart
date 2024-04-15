@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/utils/size.dart';
 import 'package:gratitude_app/utils/theme.dart';
 
 import 'auth/login_screen.dart';
+import 'bloc/visibility_bloc/visibility_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,11 +18,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return MaterialApp(
-      title: 'Gratitude App',
-      debugShowCheckedModeBanner: false,
-      theme: theme(context),
-      home: const LoginScreen(),
+    return BlocProvider(
+      create: (context) => VisibilityBloc(),
+      child: MaterialApp(
+        title: 'Gratitude App',
+        debugShowCheckedModeBanner: false,
+        theme: theme(context),
+        home: const LoginScreen(),
+      ),
     );
   }
 }

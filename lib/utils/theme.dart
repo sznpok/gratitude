@@ -48,7 +48,7 @@ ThemeData theme(BuildContext context) {
     inputDecorationTheme: InputDecorationTheme(
       hintStyle:
           Theme.of(context).textTheme.bodyLarge!.copyWith(color: hintColor),
-      enabledBorder: OutlineInputBorder(
+      /*enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(
           width: SizeConfig.screenHeight! * 0.001,
           color: secondaryColor,
@@ -56,15 +56,15 @@ ThemeData theme(BuildContext context) {
         borderRadius: BorderRadius.circular(
           SizeConfig.screenHeight! * 0.01,
         ),
-      ),
-      focusedBorder: OutlineInputBorder(
+      ),*/
+      /*focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             width: SizeConfig.screenHeight! * 0.001,
             color: secondaryColor,
           ),
           borderRadius: BorderRadius.circular(
             SizeConfig.screenHeight! * 0.01,
-          )),
+          )),*/
       errorBorder: OutlineInputBorder(
         borderSide: BorderSide(
           width: SizeConfig.screenWidth! * 0.001,

@@ -2,14 +2,14 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:dio/dio.dart';
 
-import '../list_gratitude/list_gratitude_screen.dart';
-import 'package:http/http.dart' as http;
-import '../utils/constant.dart';
 import '../utils/size.dart';
 import '../utils/theme.dart';
 
@@ -154,26 +154,48 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
               )
             ],
           ),
-          SizedBox(
-            height: SizeConfig.padding! * 0.05,
-          ),
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: TextFormField(
-              maxLines: 10,
-              textInputAction: TextInputAction.done,
-              readOnly: isEdit ? false : true,
-              canRequestFocus: true,
-              autofocus: isEdit ? true : true,
-              controller: titleController,
-              decoration: InputDecoration(
-                fillColor: Colors.grey.withOpacity(0.1),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
+            child: Stack(
+              fit: StackFit.loose,
+              alignment: Alignment.topLeft,
+              children: [
+                isEdit
+                    ? const Text('')
+                    : Image.asset(
+                        "images/quote.png",
+                        scale: 100,
+                        color: primaryColor,
+                      ),
+                TextFormField(
+                  textInputAction: TextInputAction.done,
+                  readOnly: isEdit ? false : true,
+                  canRequestFocus: true,
+                  maxLines: 10,
+                  autofocus: isEdit ? true : true,
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    fillColor: Colors.grey.withOpacity(0.1),
+                    filled: isEdit ? true : false,
+                    border: OutlineInputBorder(
+                      borderSide: isEdit
+                          ? const BorderSide(
+                              color: secondaryColor,
+                              width: 1,
+                            )
+                          : BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
-              ),
+                isEdit
+                    ? const Text('')
+                    : Image.asset(
+                        "images/quote.png",
+                        scale: 100,
+                        color: primaryColor,
+                      ),
+              ],
             ),
           ),
           SizedBox(
@@ -255,25 +277,21 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
 
   Future<void> shareImageWithText() async {
     try {
-      // Download the image
-      final response = await http.get(Uri.parse(widget.image!));
-      final bytes = response.bodyBytes;
+      final dio = Dio();
+      final response = await dio.get(widget.image!);
+      if (response.statusCode == 200) {
+        final bytes = response.data;
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/image.png');
+        await file.writeAsBytes(bytes);
 
-      // Get the temporary directory
-      final tempDir = await getTemporaryDirectory();
-
-      // Create a new file in the temporary directory
-      final file = File('${tempDir.path}/image.png');
-
-      // Write the downloaded bytes to the file
-      await file.writeAsBytes(bytes);
-
-      // Share the image using share_plus package
-      await Share.shareXFiles([XFile(file.path)],
-          text: titleController.text, subject: 'Gratitude App');
+        await Share.shareXFiles([XFile(file.path)],
+            text: titleController.text, subject: 'Gratitude App');
+      } else {
+        log('Error: Unexpected response code ${response.statusCode}');
+      }
     } catch (e) {
-      // Handle error if sharing fails
-      log('Error sharing image: $e');
+      log('Error fetching or sharing image: $e');
     }
   }
 }

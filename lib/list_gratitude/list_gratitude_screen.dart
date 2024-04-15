@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:gratitude_app/detail_gratitude/detail_gratitude_screen.dart';
 import 'package:gratitude_app/list_gratitude/custom_list_card.dart';
@@ -37,13 +40,19 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
       ),
       body: Column(
         children: [
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Today"),
-              Text('April 8th'),
-            ],
+          CalendarTimeline(
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now().subtract(const Duration(days: 3)),
+            lastDate: DateTime.now(),
+            onDateSelected: (date) => log(date.toString()),
+            leftMargin: 20,
+            monthColor: primaryColor,
+            dayColor: secondaryColor,
+            activeDayColor: Colors.white,
+            activeBackgroundDayColor: primaryColor,
+            dotsColor: secondaryColor,
+            selectableDayPredicate: (date) => date.day != 23,
+            locale: 'en_ISO',
           ),
           Expanded(
             child: ListView.builder(

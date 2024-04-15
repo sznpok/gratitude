@@ -1,5 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/auth/register_screen.dart';
+import 'package:gratitude_app/bloc/visibility_bloc/visibility_bloc.dart';
 
 import '../../../utils/size.dart';
 import '../list_gratitude/list_gratitude_screen.dart';
@@ -47,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 decoration: const InputDecoration(
                   hintText: "email",
+                  isDense: true,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -54,12 +59,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: SizeConfig.screenHeight! * 0.02,
               ),
               const Text('Password'),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  hintText: "password",
-                  border: OutlineInputBorder(),
-                ),
+              BlocBuilder<VisibilityBloc, VisibilityState>(
+                builder: (context, state) {
+                  bool obscureText = state is PasswordVisible ? true : false;
+                  return TextFormField(
+                    controller: _passwordController,
+                    obscureText: obscureText,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: "password",
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          BlocProvider.of<VisibilityBloc>(context)
+                              .add(ToggleVisibility());
+                        },
+                        icon: const Icon(Icons.visibility),
+                      ),
+                    ),
+                  );
+                },
               ),
               SizedBox(
                 height: SizeConfig.screenHeight! * 0.02,
@@ -78,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   backgroundColor: secondaryColor,
                   fixedSize: Size(
                     SizeConfig.screenWidth!,
-                    SizeConfig.screenHeight! * 0.08,
+                    SizeConfig.screenHeight! * 0.06,
                   ),
                 ),
                 child: Text(
