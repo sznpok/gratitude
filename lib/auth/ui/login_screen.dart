@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gratitude_app/auth/register_screen.dart';
+import 'package:gratitude_app/auth/ui/register_screen.dart';
 import 'package:gratitude_app/bloc/visibility_bloc/visibility_bloc.dart';
+import 'package:gratitude_app/bloc/visibility_bloc/visibility_state.dart';
 
-import '../../../utils/size.dart';
-import '../list_gratitude/list_gratitude_screen.dart';
-import '../utils/theme.dart';
+import '../../../../utils/size.dart';
+
+import '../../bloc/visibility_bloc/visibility_event.dart';
+import '../../list_gratitude/list_gratitude_screen.dart';
+import '../../utils/theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -61,10 +64,10 @@ class _LoginScreenState extends State<LoginScreen> {
               const Text('Password'),
               BlocBuilder<VisibilityBloc, VisibilityState>(
                 builder: (context, state) {
-                  bool obscureText = state is PasswordVisible ? true : false;
+                  bool visible = (state as VisibilityToggled).visible;
                   return TextFormField(
                     controller: _passwordController,
-                    obscureText: obscureText,
+                    obscureText: !visible,
                     decoration: InputDecoration(
                       isDense: true,
                       hintText: "password",
@@ -72,9 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           BlocProvider.of<VisibilityBloc>(context)
-                              .add(ToggleVisibility());
+                              .add(ToggleVisibilityEvent());
                         },
-                        icon: const Icon(Icons.visibility),
+                        icon: Icon(
+                            visible ? Icons.visibility : Icons.visibility_off),
                       ),
                     ),
                   );
@@ -104,7 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   'Login',
                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
                       ),
                 ),
               ),
@@ -133,10 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: Text(
                     'Create account',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(color: primaryColor),
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ),
               )

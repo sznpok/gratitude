@@ -1,9 +1,18 @@
-part of 'visibility_bloc.dart';
+// visibility_state.dart
+import 'package:equatable/equatable.dart';
 
-abstract class VisibilityState {}
+abstract class VisibilityState extends Equatable {
+  const VisibilityState();
 
-class SwitchInitial extends VisibilityState {}
+  @override
+  List<Object> get props => [];
+}
 
-class PasswordVisible extends VisibilityState {}
+class VisibilityToggled extends VisibilityState {
+  final bool visible;
 
-class PasswordHidden extends VisibilityState {}
+  const VisibilityToggled({required this.visible});
+
+  @override
+  List<Object> get props => [visible];
+}

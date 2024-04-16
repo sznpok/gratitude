@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/constant.dart';
-import '../utils/size.dart';
-import '../utils/theme.dart';
+import '../../utils/constant.dart';
+import '../../utils/size.dart';
+import '../../utils/theme.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -87,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     'Register',
                     style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: textColor,
                         ),
                   )),
               SizedBox(

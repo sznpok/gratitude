@@ -1,5 +1,11 @@
-part of 'visibility_bloc.dart';
+// visibility_event.dart
+import 'package:equatable/equatable.dart';
 
-abstract class VisibilityEvent {}
+abstract class VisibilityEvent extends Equatable {
+  const VisibilityEvent();
 
-class ToggleVisibility extends VisibilityEvent {}
+  @override
+  List<Object> get props => [];
+}
+
+class ToggleVisibilityEvent extends VisibilityEvent {}

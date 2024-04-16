@@ -262,7 +262,10 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: secondaryColor,
-                    foregroundColor: Colors.white,
+                    foregroundColor: textColor,
+                    textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                     fixedSize: Size(
                       SizeConfig.screenWidth! * 0.7,
                       SizeConfig.screenHeight! * 0.05,
@@ -277,21 +280,31 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
 
   Future<void> shareImageWithText() async {
     try {
+      // Download the image
       final dio = Dio();
-      final response = await dio.get(widget.image!);
-      if (response.statusCode == 200) {
-        final bytes = response.data;
-        final tempDir = await getTemporaryDirectory();
-        final file = File('${tempDir.path}/image.png');
-        await file.writeAsBytes(bytes);
+      final Response<List<int>> response = await dio.get<List<int>>(
+        widget.image!,
+        options: Options(
+          responseType: ResponseType.bytes,
+        ),
+      ); // Specify responseType as bytes
+      final bytes = response.data;
 
-        await Share.shareXFiles([XFile(file.path)],
-            text: titleController.text, subject: 'Gratitude App');
-      } else {
-        log('Error: Unexpected response code ${response.statusCode}');
-      }
+      // Get the temporary directory
+      final tempDir = await getTemporaryDirectory();
+
+      // Create a new file in the temporary directory
+      final file = File('${tempDir.path}/image.png');
+
+      // Write the downloaded bytes to the file
+      await file.writeAsBytes(bytes!); // Ensure bytes is not null
+
+      // Share the image using share_plus package
+      await Share.shareXFiles([XFile(file.path)],
+          text: titleController.text, subject: 'Gratitude App');
     } catch (e) {
-      log('Error fetching or sharing image: $e');
+      // Handle error if sharing fails
+      log('Error sharing image: $e');
     }
   }
 }

@@ -34,7 +34,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Greeting!!!"),
+        title: const Text("Greeting"),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),

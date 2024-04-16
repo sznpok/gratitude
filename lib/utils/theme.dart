@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gratitude_app/utils/size.dart';
 
-const primaryColor = Color(0xff673AB7);
+const primaryColor = Color(0xff371A94);
 const Color secondaryColor = Color(0xFFFFC107);
 const Color textFormColor = Color(0xFFD9D9D9);
 const Color errorColor = Color(0xffDC3545);
@@ -29,7 +29,7 @@ ThemeData theme(BuildContext context) {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         backgroundColor: primaryColor,
-        foregroundColor: secondaryColor,
+        foregroundColor: textColor,
         textStyle: Theme.of(context).textTheme.bodySmall,
       ),
     ),

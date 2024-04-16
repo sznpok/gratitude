@@ -171,13 +171,17 @@ class _PostGratitudeScreenState extends State<PostGratitudeScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: secondaryColor,
-                  foregroundColor: Colors.white,
+                  // foregroundColor: Colors.white,
+                  textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
                   fixedSize: Size(
                     SizeConfig.screenWidth!,
                     SizeConfig.screenHeight! * 0.01,
                   ),
                 ),
-                child: const Text("Post"),
+                child: const Text("Create"),
               ),
             ],
           ),
