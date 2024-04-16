@@ -54,9 +54,12 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
             selectableDayPredicate: (date) => date.day != 23,
             locale: 'en_ISO',
           ),
+          SizedBox(
+            height: SizeConfig.screenHeight! * 0.01,
+          ),
           Expanded(
             child: ListView.builder(
-              itemCount: 1,
+              itemCount: 10,
               padding: EdgeInsets.all(
                 SizeConfig.padding! * 0.01,
               ),
@@ -85,6 +88,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: primaryColor,
         onPressed: () {
           Navigator.push(
               context,
@@ -96,6 +100,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
         ),
         child: const Icon(
           Icons.add,
+          color: Colors.white,
         ),
       ),
     );
