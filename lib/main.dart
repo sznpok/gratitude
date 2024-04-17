@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gratitude_app/auth/bloc/login_blo/login_bloc.dart';
+import 'package:gratitude_app/auth/bloc/register_bloc/register_bloc.dart';
 import 'package:gratitude_app/utils/size.dart';
 import 'package:gratitude_app/utils/theme.dart';
 
@@ -18,8 +20,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return BlocProvider(
-      create: (context) => VisibilityBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => VisibilityBloc(),
+        ),
+        BlocProvider(
+          create: (context) => RegisterBloc(),
+        ),
+        BlocProvider(
+          create: (context) => LoginBloc(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Gratitude App',
         debugShowCheckedModeBanner: false,
