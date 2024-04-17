@@ -2,6 +2,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gratitude_app/list_gratitude/list_gratitude_screen.dart';
+import 'package:gratitude_app/post_gratitude/bloc/post_gratitude_bloc/post_gratitude_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../utils/constant.dart';
@@ -159,29 +162,45 @@ class _PostGratitudeScreenState extends State<PostGratitudeScreen> {
               SizedBox(
                 height: SizeConfig.screenHeight! * 0.02,
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_image != null) {
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Please write something'),
-                      backgroundColor: Colors.red,
-                    ));
+              BlocConsumer<PostGratitudeBloc, PostGratitudeState>(
+                listener: (context, state) {
+                  if (state is PostGratitudeErrorState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Error to post"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  } else if (state is PostGratitudeSuccessState) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ListGratitudeScreen()));
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: secondaryColor,
-                  // foregroundColor: Colors.white,
-                  textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: textColor,
-                        fontWeight: FontWeight.bold,
+                builder: (context, state) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      BlocProvider.of<PostGratitudeBloc>(context).add(
+                        OnPostGratitudeEvent(titleController.text, "profile"),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: secondaryColor,
+                      // foregroundColor: Colors.white,
+                      textStyle:
+                          Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                color: textColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                      fixedSize: Size(
+                        SizeConfig.screenWidth!,
+                        SizeConfig.screenHeight! * 0.01,
                       ),
-                  fixedSize: Size(
-                    SizeConfig.screenWidth!,
-                    SizeConfig.screenHeight! * 0.01,
-                  ),
-                ),
-                child: const Text("Create"),
+                    ),
+                    child: const Text("Create"),
+                  );
+                },
               ),
             ],
           ),

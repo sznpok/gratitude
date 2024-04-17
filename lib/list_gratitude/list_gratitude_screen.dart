@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/detail_gratitude/detail_gratitude_screen.dart';
 import 'package:gratitude_app/list_gratitude/custom_list_card.dart';
+import 'package:gratitude_app/list_gratitude/list_gratitude_bloc/list_gratitude_bloc.dart';
 
 import '../post_gratitude/post_gratitude_screen.dart';
 import '../utils/constant.dart';
@@ -27,6 +29,8 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
 
   @override
   void initState() {
+    BlocProvider.of<ListGratitudeBloc>(context)
+        .add(LoadingListGratitudeEvent());
     super.initState();
   }
 
@@ -58,28 +62,45 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
             height: SizeConfig.screenHeight! * 0.01,
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              padding: EdgeInsets.all(
-                SizeConfig.padding! * 0.01,
-              ),
-              itemBuilder: (context, i) {
-                return GestureDetector(
-                  child: CustomListCard(
-                    title: title,
-                    image: image,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailGratitudeScreen(
-                          title: title,
-                          image: image,
+            child: BlocBuilder<ListGratitudeBloc, ListGratitudeState>(
+              builder: (context, state) {
+                if (state is ListGratitudeErrorState) {
+                  return Center(
+                    child: Text(state.error),
+                  );
+                } else if (state is ListGratitudeLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                } else if (state is ListGratitudeSuccessState) {
+                  return ListView.builder(
+                    itemCount: state.listGratitudeModel!.gg!.length,
+                    padding: EdgeInsets.all(
+                      SizeConfig.padding! * 0.01,
+                    ),
+                    itemBuilder: (context, i) {
+                      return GestureDetector(
+                        child: CustomListCard(
+                          title: state.listGratitudeModel!.gg![i].title!,
+                          image: state.listGratitudeModel!.gg![i].profile!.url!,
                         ),
-                      ),
-                    );
-                  },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailGratitudeScreen(
+                                title: title,
+                                image: image,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator.adaptive(),
                 );
               },
             ),
