@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gratitude_app/detail_gratitude/bloc/gratitude_delete_bloc/gratitude_delete_bloc.dart';
+import 'package:gratitude_app/list_gratitude/list_gratitude_screen.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,9 +22,11 @@ class DetailGratitudeScreen extends StatefulWidget {
     super.key,
     this.image,
     this.title,
+    required this.id,
   });
 
   final String? title;
+  final String id;
   final String? image;
 
   @override
@@ -243,21 +248,49 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                           color: textColor,
                         ),
                       ),
-                      FloatingActionButton(
-                        onPressed: () {
-                          CustomAlertProgressIndicator.showInputDialog(context);
+                      BlocConsumer<GratitudeDeleteBloc, GratitudeDeleteState>(
+                        listener: (context, state) {
+                          if (state is GratitudeDeleteErrorState) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Error Occur While Deleting"),
+                              backgroundColor: Colors.red,
+                            ));
+                          } else if (state is GratitudeDeleteSuccessState) {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ListGratitudeScreen()),
+                                (route) => false);
+                          }
                         },
-                        heroTag: "fab3",
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            SizeConfig.padding!,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ),
+                        builder: (context, state) {
+                          return state is GratitudeDeleteLoadingState
+                              ? const Center(
+                                  child: CircularProgressIndicator.adaptive(),
+                                )
+                              : FloatingActionButton(
+                                  onPressed: () {
+                                    //CustomAlertProgressIndicator.showInputDialog(context);
+                                    BlocProvider.of<GratitudeDeleteBloc>(
+                                            context)
+                                        .add(OnDeleteGratitudeDeleteEvent(
+                                            widget.id));
+                                  },
+                                  heroTag: "fab3",
+                                  backgroundColor: Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      SizeConfig.padding!,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                );
+                        },
                       ),
                       SizedBox(
                         height: SizeConfig.padding! * 0.2,

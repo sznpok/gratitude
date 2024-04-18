@@ -66,7 +66,13 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
               builder: (context, state) {
                 if (state is ListGratitudeErrorState) {
                   return Center(
-                    child: Text(state.error),
+                    child: Text(
+                      "There is no any gratitude data\n Please Click button below to create new gratitude",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: textColor,
+                          ),
+                    ),
                   );
                 } else if (state is ListGratitudeLoadingState) {
                   return const Center(
@@ -81,7 +87,8 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                     itemBuilder: (context, i) {
                       return GestureDetector(
                         child: CustomListCard(
-                          title: state.listGratitudeModel!.gg![i].title!,
+                          title:
+                              state.listGratitudeModel!.gg![i].title.toString(),
                           image: state.listGratitudeModel!.gg![i].profile!.url!,
                         ),
                         onTap: () {
@@ -89,8 +96,11 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => DetailGratitudeScreen(
-                                title: title,
-                                image: image,
+                                title: state.listGratitudeModel!.gg![i].title
+                                    .toString(),
+                                id: state.listGratitudeModel!.gg![i].sId!,
+                                image: state
+                                    .listGratitudeModel!.gg![i].profile!.url,
                               ),
                             ),
                           );

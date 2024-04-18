@@ -21,6 +21,7 @@ class HttpManager {
       'Content-Type': 'application/json',
     };
     Map<String, String> headingWithToken = {
+      'Content-Type': 'application/json',
       'Authorization': 'Bearer ${AccessToken.tokenAccess}',
     };
     Map<String, String> headingWithPatchToken = {

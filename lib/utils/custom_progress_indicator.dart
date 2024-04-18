@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gratitude_app/utils/size.dart';
 
 class CustomAlertProgressIndicator {
-  static void showInputDialog(BuildContext context) {
+  static showInputDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,

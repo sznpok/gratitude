@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/list_gratitude/list_gratitude_screen.dart';
 import 'package:gratitude_app/post_gratitude/bloc/post_gratitude_bloc/post_gratitude_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../utils/constant.dart';
 import '../utils/size.dart';
+import '../utils/string_to_baseurl.dart';
 import '../utils/theme.dart';
 
 class PostGratitudeScreen extends StatefulWidget {
@@ -172,34 +175,44 @@ class _PostGratitudeScreenState extends State<PostGratitudeScreen> {
                       ),
                     );
                   } else if (state is PostGratitudeSuccessState) {
-                    Navigator.push(
+                    Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ListGratitudeScreen()));
+                            builder: (context) => const ListGratitudeScreen()),
+                        (route) => false);
                   }
                 },
                 builder: (context, state) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<PostGratitudeBloc>(context).add(
-                        OnPostGratitudeEvent(titleController.text, "profile"),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: secondaryColor,
-                      // foregroundColor: Colors.white,
-                      textStyle:
-                          Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                color: textColor,
-                                fontWeight: FontWeight.bold,
+                  return state is PostGratitudeLoadingState
+                      ? const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        )
+                      : ElevatedButton(
+                          onPressed: () async {
+                            String image = convertToBase64(_image!);
+                            log(image);
+                            BlocProvider.of<PostGratitudeBloc>(context).add(
+                              OnPostGratitudeEvent(
+                                titleController.text,
+                                image,
                               ),
-                      fixedSize: Size(
-                        SizeConfig.screenWidth!,
-                        SizeConfig.screenHeight! * 0.01,
-                      ),
-                    ),
-                    child: const Text("Create"),
-                  );
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: secondaryColor,
+                            // foregroundColor: Colors.white,
+                            textStyle:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      color: textColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                            fixedSize: Size(
+                              SizeConfig.screenWidth!,
+                              SizeConfig.screenHeight! * 0.01,
+                            ),
+                          ),
+                          child: const Text("Create"),
+                        );
                 },
               ),
             ],

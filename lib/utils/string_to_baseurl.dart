@@ -1,39 +1,30 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 
-Image imageFromBase64String(String base64String) {
-  return Image.memory(base64Decode(stripBase64String(base64String)));
+dynamic convertToBase64(File file) {
+  List<int> imageBytes = file.readAsBytesSync();
+  String base64Image = base64Encode(imageBytes);
+  return "data:image/${getImageExtension(file.path)};base64,$base64Image";
 }
 
-/*SvgPicture svgFromBase64String(
-  String base64String,
-  Color color,
-) {
-  return SvgPicture.memory(
-    base64Decode(stripBase64String(base64String)),
-    color: color,
-    width: 3 * SizeConfig.heightMultiplier,
-    height: 3.5 * SizeConfig.heightMultiplier,
-  );
-}*/
-
-Uint8List dataFromBase64String(String base64String) {
-  return base64Decode(stripBase64String(base64String));
-}
-
-String base64String(Uint8List data) {
-  return base64Encode(data);
-}
-
-String stripBase64String(String body) {
-  if (body.trim().isEmpty) {
-    return "";
-  } else if (!body.contains(",")) {
-    return body;
+String getImageExtension(String imagePath) {
+  // Get the file extension by splitting the file path at the last dot
+  List<String> parts = imagePath.split('.');
+  if (parts.length > 1) {
+    // If there's more than one part after splitting, assume the last part is the extension
+    String extension = parts.last.toLowerCase();
+    // Check if the extension is one of the commonly used image extensions
+    if (extension == 'jpg' ||
+        extension == 'jpeg' ||
+        extension == 'png' ||
+        extension == "svg") {
+      return extension;
+    }
   }
-  final replaced = body.trim().replaceFirst(",", " ");
-  final list = replaced.split(" ");
-  return list[1];
+  // Default to empty string if the extension is not found or not supported
+  return '';
 }

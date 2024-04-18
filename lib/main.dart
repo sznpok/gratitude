@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/auth/bloc/login_blo/login_bloc.dart';
 import 'package:gratitude_app/auth/bloc/register_bloc/register_bloc.dart';
+import 'package:gratitude_app/detail_gratitude/bloc/gratitude_delete_bloc/gratitude_delete_bloc.dart';
 import 'package:gratitude_app/list_gratitude/list_gratitude_bloc/list_gratitude_bloc.dart';
 import 'package:gratitude_app/post_gratitude/bloc/post_gratitude_bloc/post_gratitude_bloc.dart';
 import 'package:gratitude_app/splash_screen.dart';
@@ -39,6 +40,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ListGratitudeBloc(),
+        ),
+        BlocProvider(
+          create: (context) => GratitudeDeleteBloc(),
         ),
       ],
       child: MaterialApp(
