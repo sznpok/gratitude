@@ -6,6 +6,8 @@ import 'package:gratitude_app/auth/bloc/login_blo/login_bloc.dart';
 import 'package:gratitude_app/auth/ui/register_screen.dart';
 import 'package:gratitude_app/bloc/visibility_bloc/visibility_bloc.dart';
 import 'package:gratitude_app/bloc/visibility_bloc/visibility_state.dart';
+import 'package:gratitude_app/utils/constant.dart';
+import 'package:gratitude_app/utils/secure_storage.dart';
 import 'package:gratitude_app/utils/validation.dart';
 
 import '../../../../utils/size.dart';
@@ -27,10 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  void submit() {
+  void submit() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    await writeUserEmail(_emailController.text);
     BlocProvider.of<LoginBloc>(context).add(
       OnLoginEvent(
         _emailController.text,

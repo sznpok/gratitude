@@ -9,6 +9,7 @@ import 'package:gratitude_app/detail_gratitude/bloc/gratitude_delete_bloc/gratit
 import 'package:gratitude_app/detail_gratitude/bloc/update_gratitude_bloc/update_gratitude_bloc.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:dio/dio.dart';
@@ -24,11 +25,13 @@ class DetailGratitudeScreen extends StatefulWidget {
     super.key,
     this.image,
     this.title,
+    this.date,
     required this.id,
   });
 
   final String? title;
   final String id;
+  final String? date;
   final String? image;
 
   @override
@@ -39,7 +42,6 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
   final TextEditingController titleController = TextEditingController();
   final FocusNode _titleFocusNode = FocusNode();
   bool isEdit = false;
-
   File? _image;
   final ImagePicker picker = ImagePicker();
 
@@ -79,6 +81,7 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Stack(
               fit: StackFit.loose,
@@ -168,18 +171,12 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                 fit: StackFit.loose,
                 alignment: Alignment.topLeft,
                 children: [
-                  isEdit
-                      ? const Text('')
-                      : Image.asset(
-                          "images/quote.png",
-                          scale: 100,
-                          color: primaryColor,
-                        ),
                   TextFormField(
                     textInputAction: TextInputAction.done,
                     readOnly: isEdit ? false : true,
                     canRequestFocus: true,
                     maxLines: 10,
+                    textAlign: TextAlign.justify,
                     autofocus: isEdit ? true : true,
                     controller: titleController,
                     decoration: InputDecoration(
@@ -198,10 +195,25 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                   ),
                   isEdit
                       ? const Text('')
-                      : Image.asset(
-                          "images/quote.png",
-                          scale: 100,
-                          color: primaryColor,
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(
+                              "images/quote.png",
+                              scale: 100,
+                              color: primaryColor,
+                            ),
+                            Text(
+                              "-${widget.date!}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                          ],
                         ),
                 ],
               ),
