@@ -11,7 +11,7 @@ import 'package:gratitude_app/utils/validation.dart';
 import '../../../../utils/size.dart';
 
 import '../../bloc/visibility_bloc/visibility_event.dart';
-import '../../list_gratitude/list_gratitude_screen.dart';
+import '../../list_gratitude/ui/list_gratitude_screen.dart';
 import '../../utils/theme.dart';
 
 class LoginScreen extends StatefulWidget {

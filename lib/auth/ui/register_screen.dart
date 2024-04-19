@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/auth/bloc/register_bloc/register_bloc.dart';
-import 'package:gratitude_app/list_gratitude/list_gratitude_screen.dart';
 import 'package:gratitude_app/utils/validation.dart';
 
+import '../../list_gratitude/ui/list_gratitude_screen.dart';
 import '../../utils/constant.dart';
 import '../../utils/size.dart';
 import '../../utils/theme.dart';

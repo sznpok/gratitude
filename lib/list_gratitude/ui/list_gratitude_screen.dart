@@ -3,14 +3,13 @@ import 'dart:developer';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gratitude_app/detail_gratitude/detail_gratitude_screen.dart';
-import 'package:gratitude_app/list_gratitude/custom_list_card.dart';
+import 'package:gratitude_app/detail_gratitude/ui/detail_gratitude_screen.dart';
+import 'package:gratitude_app/list_gratitude/ui/custom_list_card.dart';
 import 'package:gratitude_app/list_gratitude/list_gratitude_bloc/list_gratitude_bloc.dart';
 
-import '../post_gratitude/post_gratitude_screen.dart';
-import '../utils/constant.dart';
-import '../utils/size.dart';
-import '../utils/theme.dart';
+import '../../post_gratitude/post_gratitude_screen.dart';
+import '../../utils/size.dart';
+import '../../utils/theme.dart';
 
 class ListGratitudeScreen extends StatefulWidget {
   const ListGratitudeScreen({super.key});

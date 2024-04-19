@@ -25,10 +25,11 @@ class LoginRepo {
     log(body.toString());
     try {
       if (response.statusCode == 200) {
-        final data = AuthModel.fromJson(json.decode(response.body));
-        final String token = data.token.toString();
-        AccessToken.tokenAccess = token;
-        await SecureStorage().writeTokenAccess(token);
+        //final data = AuthModel.fromJson(json.decode(response.body));
+        AccessToken.tokenAccess = jsonDecode(response.body)["token"];
+        // AccessToken.tokenAccess = data.token!;
+        log(AccessToken.tokenAccess);
+        await writeTokenAccess(AccessToken.tokenAccess);
         log("success");
         return true;
       } else {
