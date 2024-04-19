@@ -6,6 +6,7 @@ import 'package:gratitude_app/utils/api_url.dart';
 import 'package:gratitude_app/utils/constant.dart';
 import 'package:gratitude_app/utils/http_manager.dart';
 import 'package:gratitude_app/utils/request_type.dart';
+import 'package:gratitude_app/utils/secure_storage.dart';
 import 'package:http/http.dart';
 
 class LoginRepo {
@@ -25,7 +26,9 @@ class LoginRepo {
     try {
       if (response.statusCode == 200) {
         final data = AuthModel.fromJson(json.decode(response.body));
-        AccessToken.tokenAccess = data.token.toString();
+        final String token = data.token.toString();
+        AccessToken.tokenAccess = token;
+        await SecureStorage().writeTokenAccess(token);
         log("success");
         return true;
       } else {

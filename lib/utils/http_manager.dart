@@ -57,7 +57,7 @@ class HttpManager {
         return _client.patch(
           stringToUrl(url),
           body: jsonEncode(parameter),
-          headers: headingWithPatchToken,
+          headers: headingWithToken,
         );
 
       case RequestEnum.deleteWithToken:

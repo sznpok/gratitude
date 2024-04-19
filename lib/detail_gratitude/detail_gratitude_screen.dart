@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/detail_gratitude/bloc/gratitude_delete_bloc/gratitude_delete_bloc.dart';
+import 'package:gratitude_app/detail_gratitude/bloc/update_gratitude_bloc/update_gratitude_bloc.dart';
 import 'package:gratitude_app/list_gratitude/list_gratitude_screen.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -15,6 +16,7 @@ import 'package:dio/dio.dart';
 
 import '../utils/custom_progress_indicator.dart';
 import '../utils/size.dart';
+import '../utils/string_to_baseurl.dart';
 import '../utils/theme.dart';
 
 class DetailGratitudeScreen extends StatefulWidget {
@@ -297,21 +299,58 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                       ),
                     ],
                   )
-                : ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: secondaryColor,
-                      foregroundColor: textColor,
-                      textStyle:
-                          Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
+                : BlocConsumer<UpdateGratitudeBloc, UpdateGratitudeState>(
+                    listener: (context, state) {
+                      if (state is UpdateGratitudeErrorState) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Error On updating"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else if (state is UpdateGratitudeSuccessState) {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ListGratitudeScreen()),
+                            (route) => false);
+                      }
+                    },
+                    builder: (context, state) {
+                      return state is UpdateGratitudeLoadingState
+                          ? const Center(
+                              child: CircularProgressIndicator.adaptive(),
+                            )
+                          : ElevatedButton(
+                              onPressed: () async {
+                                String image = _image != null
+                                    ? convertToBase64(_image!)
+                                    : widget.image;
+                                BlocProvider.of<UpdateGratitudeBloc>(context)
+                                    .add(OnUpdateGratitudeEvent(
+                                  widget.id,
+                                  titleController.text,
+                                  image,
+                                ));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: secondaryColor,
+                                foregroundColor: textColor,
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                fixedSize: Size(
+                                  SizeConfig.screenWidth! * 0.7,
+                                  SizeConfig.screenHeight! * 0.05,
+                                ),
                               ),
-                      fixedSize: Size(
-                        SizeConfig.screenWidth! * 0.7,
-                        SizeConfig.screenHeight! * 0.05,
-                      ),
-                    ),
-                    child: const Text("Update"),
+                              child: const Text("Update"),
+                            );
+                    },
                   ),
           ],
         ),
