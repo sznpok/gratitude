@@ -30,8 +30,10 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
 
   @override
   void initState() {
+    DateTime currentDate = DateTime.now();
+    gratitudeDate = currentDate.toString();
     BlocProvider.of<ListGratitudeBloc>(context)
-        .add(LoadingListGratitudeEvent());
+        .add(LoadingListGratitudeEvent(gratitudeDate));
     super.initState();
   }
 

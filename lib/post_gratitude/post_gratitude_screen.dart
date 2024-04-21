@@ -31,18 +31,16 @@ class _PostGratitudeScreenState extends State<PostGratitudeScreen> {
   void chooseGalleryImage() async {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      setState(() {
-        _image = File(image.path);
-      });
+      _image = File(image.path);
+      (context as Element).markNeedsBuild();
     }
   }
 
   void chooseCameraImage() async {
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
-      setState(() {
-        _image = File(image.path);
-      });
+      _image = File(image.path);
+      (context as Element).markNeedsBuild();
     }
   }
 
