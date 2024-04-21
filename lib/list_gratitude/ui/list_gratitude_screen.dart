@@ -1,6 +1,5 @@
 import 'dart:developer';
-
-import 'package:calendar_timeline/calendar_timeline.dart';
+import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/detail_gratitude/ui/detail_gratitude_screen.dart';
@@ -27,6 +26,8 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
 
   String gratitudeDate = "";
 
+  List<Gg> gratitudeList = [];
+
   @override
   void initState() {
     BlocProvider.of<ListGratitudeBloc>(context)
@@ -34,16 +35,16 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
     super.initState();
   }
 
-  /*List<Gg> findGratitudeList(List<Gg> gratitudeModel, String date) {
-    final List<Gg> gratitudeList = [];
-    for (int i = 0; i < gratitudeModel.length; i++) {
-      if (convertDateFormat(gratitudeModel[i].createdAt.toString()) ==
-          date.toString()) {
-        gratitudeList.add(gratitudeModel[i]);
-      }
+  List<DateTime> _calculateDisabledDates() {
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    final disabledDates = <DateTime>[];
+    for (var i = tomorrow;
+        i.isBefore(DateTime.now().add(const Duration(days: 365)));
+        i = i.add(const Duration(days: 1))) {
+      disabledDates.add(i);
     }
-    return gratitudeList;
-  }*/
+    return disabledDates;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +77,9 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
       body: BlocBuilder<ListGratitudeBloc, ListGratitudeState>(
         builder: (context, state) {
           if (state is ListGratitudeErrorState) {
-            return Center(
-              child: Text(
-                "There is no any gratitude data\n Please Click button below to create new gratitude",
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: textColor,
-                    ),
-              ),
+            return Image.asset(
+              "images/nodatafound.png",
+              fit: BoxFit.cover,
             );
           } else if (state is ListGratitudeLoadingState) {
             return const Center(
@@ -92,13 +88,19 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
           } else if (state is ListGratitudeSuccessState) {
             return Column(
               children: [
-                CalendarTimeline(
+                /*CalendarTimeline(
                   initialDate: DateTime.now(),
                   firstDate: DateTime.now().subtract(const Duration(days: 3)),
                   lastDate: DateTime.now(),
                   onDateSelected: (date) {
                     gratitudeDate = date.toString();
-                    //(context as Element).markNeedsBuild();
+                    gratitudeList = state.listGratitudeModel!.gg!
+                        .where((gratitude) =>
+                            convertDateFormat(gratitude.createdAt.toString()) ==
+                            gratitudeDate)
+                        .toList();
+
+                    (context as Element).markNeedsBuild();
                   },
                   leftMargin: 20,
                   monthColor: primaryColor,
@@ -108,52 +110,99 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                   dotsColor: secondaryColor,
                   selectableDayPredicate: (date) {
                     // (context as Element).markNeedsBuild();
-
                     return date.day != 23;
                   },
                   locale: 'en_ISO',
+                ),*/
+                EasyDateTimeLine(
+                  initialDate: DateTime.now(),
+                  disabledDates: _calculateDisabledDates(),
+                  onDateChange: (selectedDate) {
+                    gratitudeDate = selectedDate.toString();
+                    gratitudeList = state.listGratitudeModel!.gg!
+                        .where((gratitude) =>
+                            convertDateFormat(gratitude.createdAt.toString()) ==
+                            gratitudeDate)
+                        .toList();
+                    (context as Element).markNeedsBuild();
+                  },
+                  activeColor: primaryColor,
+                  dayProps: const EasyDayProps(
+                    activeDayStyle: DayStyle(
+                      borderRadius: 8.0,
+                    ),
+                    inactiveDayStyle: DayStyle(
+                      borderRadius: 8.0,
+                    ),
+                  ),
+                  timeLineProps: const EasyTimeLineProps(
+                    hPadding: 8.0, // padding from left and right
+                    separatorPadding: 12.0, // padding between days
+                  ),
                 ),
                 SizedBox(
                   height: SizeConfig.screenHeight! * 0.01,
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: state.listGratitudeModel!.gg!.length,
-                    padding: EdgeInsets.all(
-                      SizeConfig.padding! * 0.01,
-                    ),
-                    itemBuilder: (context, i) {
-                      final data = state.listGratitudeModel!.gg!;
-                      return GestureDetector(
-                        child: CustomListCard(
-                          title: data[i].title!,
-                          image: data[i].profile!.url!,
-                        ),
-                        onTap: () {
-                          DateTime initialDate = DateTime.parse(
-                              state.listGratitudeModel!.gg![i].createdAt!);
-                          String finalDateString =
-                              DateFormat('MMMM d, yyyy').format(initialDate);
-                          finalDateString = finalDateString.replaceRange(
-                              0, 1, finalDateString[0].toUpperCase());
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailGratitudeScreen(
-                                title: state.listGratitudeModel!.gg![i].title
-                                    .toString(),
-                                id: state.listGratitudeModel!.gg![i].sId!,
-                                image: state
-                                    .listGratitudeModel!.gg![i].profile!.url,
-                                date: finalDateString,
+                gratitudeList.isNotEmpty
+                    ? Expanded(
+                        child: ListView.builder(
+                          itemCount: gratitudeList.length,
+                          padding: EdgeInsets.all(
+                            SizeConfig.padding! * 0.01,
+                          ),
+                          itemBuilder: (context, i) {
+                            final data = gratitudeList;
+                            return GestureDetector(
+                              child: CustomListCard(
+                                title: data[i].title!,
+                                image: data[i].profile!.url!,
                               ),
+                              onTap: () {
+                                DateTime initialDate =
+                                    DateTime.parse(gratitudeList[i].createdAt!);
+                                String finalDateString =
+                                    DateFormat('MMMM d, yyyy')
+                                        .format(initialDate);
+                                finalDateString = finalDateString.replaceRange(
+                                    0, 1, finalDateString[0].toUpperCase());
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailGratitudeScreen(
+                                      title: gratitudeList[i].title.toString(),
+                                      id: gratitudeList[i].sId!,
+                                      image: gratitudeList[i].profile!.url,
+                                      date: finalDateString,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      )
+                    : Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "images/nodatafound.png",
+                              fit: BoxFit.fitWidth,
+                              width: SizeConfig.screenWidth! * 0.3,
                             ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
+                            Text(
+                              "No Data Found !!!",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(
+                                    color: primaryColor,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
                 /*Expanded(
                   child: ListView.builder(
                     itemCount: state.listGratitudeModel!.gg!.length,
