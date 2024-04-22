@@ -34,5 +34,3 @@ class PostGratitudeRepo {
     }
   }
 }
-
-// this error show in server side
