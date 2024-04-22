@@ -7,6 +7,7 @@ import 'package:gratitude_app/utils/request_type.dart';
 import 'package:http/http.dart';
 
 import '../../utils/constant.dart';
+import '../../utils/secure_storage.dart';
 import '../mdoel/auth_model.dart';
 
 class RegisterRepo {
@@ -29,6 +30,9 @@ class RegisterRepo {
       if (response.statusCode == 201) {
         final data = AuthModel.fromJson(json.decode(response.body));
         AccessToken.tokenAccess = data.token.toString();
+        Constant.userName = data.user!.name!;
+        await writeTokenAccess(AccessToken.tokenAccess);
+        await writeUserName(Constant.userName);
         return true;
       } else {
         return throw Exception("Error to register");

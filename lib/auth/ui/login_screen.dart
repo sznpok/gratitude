@@ -116,15 +116,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   listener: (context, state) {
                     if (state is LoginErrorState) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Login Error"),
+                        content: Text("Invalid Credential"),
                         backgroundColor: Colors.red,
                       ));
                     } else if (state is LoginSuccessState) {
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const ListGratitudeScreen()));
+                                  const ListGratitudeScreen()),
+                          (route) => false);
+                      ;
                     }
                   },
                   builder: (context, state) {

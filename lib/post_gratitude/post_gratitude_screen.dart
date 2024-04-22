@@ -188,7 +188,7 @@ class _PostGratitudeScreenState extends State<PostGratitudeScreen> {
                       : ElevatedButton(
                           onPressed: () async {
                             String image = convertToBase64(_image!);
-                            log(image);
+                            log(image.length.toString());
                             BlocProvider.of<PostGratitudeBloc>(context).add(
                               OnPostGratitudeEvent(
                                 titleController.text,

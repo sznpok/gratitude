@@ -78,54 +78,55 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
       body: BlocBuilder<ListGratitudeBloc, ListGratitudeState>(
         builder: (context, state) {
           if (state is ListGratitudeErrorState) {
-            return Image.asset(
-              "images/nodatafound.png",
-              fit: BoxFit.cover,
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "images/nodatafound.png",
+                    fit: BoxFit.fitWidth,
+                    width: SizeConfig.screenWidth! * 0.3,
+                  ),
+                  Text(
+                    "No Data Found !!!",
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: primaryColor,
+                        ),
+                  ),
+                ],
+              ),
             );
           } else if (state is ListGratitudeLoadingState) {
             return const Center(
               child: CircularProgressIndicator.adaptive(),
             );
           } else if (state is ListGratitudeSuccessState) {
+            isLoading = true;
+            gratitudeList = state.listGratitudeModel!.gg!;
+
             return Column(
               children: [
-                /*CalendarTimeline(
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now().subtract(const Duration(days: 3)),
-                  lastDate: DateTime.now(),
-                  onDateSelected: (date) {
-                    gratitudeDate = date.toString();
-                    gratitudeList = state.listGratitudeModel!.gg!
-                        .where((gratitude) =>
-                            convertDateFormat(gratitude.createdAt.toString()) ==
-                            gratitudeDate)
-                        .toList();
-
-                    (context as Element).markNeedsBuild();
-                  },
-                  leftMargin: 20,
-                  monthColor: primaryColor,
-                  dayColor: secondaryColor,
-                  activeDayColor: Colors.white,
-                  activeBackgroundDayColor: primaryColor,
-                  dotsColor: secondaryColor,
-                  selectableDayPredicate: (date) {
-                    // (context as Element).markNeedsBuild();
-                    return date.day != 23;
-                  },
-                  locale: 'en_ISO',
-                ),*/
                 EasyDateTimeLine(
                   initialDate: DateTime.now(),
                   disabledDates: _calculateDisabledDates(),
                   onDateChange: (selectedDate) {
-                    gratitudeDate = selectedDate.toString();
-                    gratitudeList = state.listGratitudeModel!.gg!
-                        .where((gratitude) =>
-                            convertDateFormat(gratitude.createdAt.toString()) ==
-                            gratitudeDate)
-                        .toList();
-                    (context as Element).markNeedsBuild();
+                    // Filter gratitudeList based on selected date
+                    if (isLoading) {
+                      gratitudeDate = selectedDate.toString();
+                      gratitudeList = state.listGratitudeModel!.gg!
+                          .where((gratitude) =>
+                              convertDateFormat(
+                                  gratitude.createdAt.toString()) ==
+                              gratitudeDate)
+                          .toList();
+                      log(gratitudeList.length.toString());
+                      (context as Element).markNeedsBuild();
+                    } else {
+                      gratitudeList = state.listGratitudeModel!.gg!;
+                      log(gratitudeList.length.toString());
+                      (context as Element).markNeedsBuild();
+                    }
                   },
                   activeColor: primaryColor,
                   dayProps: const EasyDayProps(
@@ -152,7 +153,9 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             SizeConfig.padding! * 0.01,
                           ),
                           itemBuilder: (context, i) {
-                            final data = gratitudeList;
+                            final data = !isLoading
+                                ? gratitudeList
+                                : state.listGratitudeModel!.gg!;
                             return GestureDetector(
                               child: CustomListCard(
                                 title: data[i].title!,
@@ -160,7 +163,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                               ),
                               onTap: () {
                                 DateTime initialDate =
-                                    DateTime.parse(gratitudeList[i].createdAt!);
+                                    DateTime.parse(data[i].createdAt!);
                                 String finalDateString =
                                     DateFormat('MMMM d, yyyy')
                                         .format(initialDate);
@@ -170,9 +173,9 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DetailGratitudeScreen(
-                                      title: gratitudeList[i].title.toString(),
-                                      id: gratitudeList[i].sId!,
-                                      image: gratitudeList[i].profile!.url,
+                                      title: data[i].title.toString(),
+                                      id: data[i].sId!,
+                                      image: data[i].profile!.url,
                                       date: finalDateString,
                                     ),
                                   ),

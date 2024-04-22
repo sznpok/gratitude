@@ -6,6 +6,7 @@ import 'package:gratitude_app/utils/validation.dart';
 
 import '../../list_gratitude/ui/list_gratitude_screen.dart';
 import '../../utils/constant.dart';
+import '../../utils/secure_storage.dart';
 import '../../utils/size.dart';
 import '../../utils/theme.dart';
 
@@ -22,10 +23,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
 
-  void _onSubmit() {
+  void _onSubmit() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    String? token = await readTokenAccess();
+    AccessToken.tokenAccess = token.toString();
     BlocProvider.of<RegisterBloc>(context).add(OnClickRegisterEvent(
       password: _passwordController.text,
       email: _emailController.text,
