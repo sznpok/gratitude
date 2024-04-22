@@ -1,15 +1,12 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gratitude_app/post_gratitude/bloc/post_gratitude_bloc/post_gratitude_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../list_gratitude/ui/list_gratitude_screen.dart';
-import '../utils/constant.dart';
 import '../utils/size.dart';
 import '../utils/string_to_baseurl.dart';
 import '../utils/theme.dart';

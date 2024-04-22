@@ -9,7 +9,10 @@ import 'package:gratitude_app/post_gratitude/bloc/post_gratitude_bloc/post_grati
 import 'package:gratitude_app/splash_screen.dart';
 import 'package:gratitude_app/utils/size.dart';
 import 'package:gratitude_app/utils/theme.dart';
+import 'package:http/http.dart';
 import 'bloc/visibility_bloc/visibility_bloc.dart';
+import 'post_gratitude/repo/post_gratitude_repo.dart';
+import 'utils/http_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(

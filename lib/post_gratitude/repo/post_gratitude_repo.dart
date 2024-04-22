@@ -18,6 +18,7 @@ class PostGratitudeRepo {
       url: Api.gratitudeUrl,
       parameter: jsonEncode(body),
     );
+    log(response.statusCode.toString());
     try {
       if (response.statusCode == 201) {
         log(response.body.toString());
@@ -25,6 +26,7 @@ class PostGratitudeRepo {
         return true;
       } else {
         log("error");
+        log(response.body);
         return false;
       }
     } catch (e) {
@@ -32,3 +34,5 @@ class PostGratitudeRepo {
     }
   }
 }
+
+// this error show in server side
