@@ -20,9 +20,9 @@ class UpdateGratitudeBloc
     UpdateGratitudeRepo updateGratitudeRepo = UpdateGratitudeRepo();
     emit(UpdateGratitudeLoadingState());
     final result = await updateGratitudeRepo.update(
-      event.title!,
-      event.image!,
-      event.id,
+      text: event.title,
+      id: event.id,
+      imageUrl: event.image,
     );
     if (result == true) {
       emit(UpdateGratitudeSuccessState());

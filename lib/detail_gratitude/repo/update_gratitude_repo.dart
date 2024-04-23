@@ -1,10 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:gratitude_app/utils/api_url.dart';
 import 'package:gratitude_app/utils/constant.dart';
 import 'package:gratitude_app/utils/http_manager.dart';
 import 'package:gratitude_app/utils/request_type.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class UpdateGratitudeRepo {
   //HttpManager httpManager = HttpManager(Client());
@@ -30,38 +32,48 @@ class UpdateGratitudeRepo {
       throw Exception(e.toString());
     }
   }*/
-  Future<bool> update(String text, String? imagePath, String id) async {
-    // Create a multipart request
+  Future<bool> update({
+    String? text,
+    String? imageUrl,
+    String? id, // Changed from imagePath to imageUrl
+  }) async {
     var request =
         http.MultipartRequest('PATCH', Uri.parse("${Api.gratitudeUrl}/$id"));
-
-    // Add text data
-    request.fields['title'] = text;
-
-    // Add image data if imagePath is provided
-    if (imagePath != null && imagePath.isNotEmpty) {
-      var image = await http.MultipartFile.fromPath('profile', imagePath);
-      request.files.add(image);
-    }
-
-    // Add access token to request headers
-    request.headers['Authorization'] = 'Bearer ${AccessToken.tokenAccess}';
-
     try {
-      // Send the request
-      var response = await request.send();
+      if (text != null) {
+        request.fields['title'] = text;
+      }
+      if (imageUrl != null) {
+        // Download the image from the URL
+        var response = await http.get(Uri.parse(imageUrl));
+        if (response.statusCode == 200) {
+          // Create a temporary file to store the downloaded image
+          var tempDir = await getTemporaryDirectory();
+          var tempFile = File('${tempDir.path}/temp_image.jpg');
+          await tempFile.writeAsBytes(response.bodyBytes);
 
-      // Check the response
+          // Add the downloaded image to the request
+          var image =
+              await http.MultipartFile.fromPath('profile', tempFile.path);
+          request.files.add(image);
+        } else {
+          throw Exception('Failed to download image');
+        }
+      }
+      request.headers['Authorization'] = 'Bearer ${AccessToken.tokenAccess}';
+      var response = await request.send();
       log(response.statusCode.toString());
+      // Check the response
       if (response.statusCode == 200) {
-        log('Data updated successfully');
+        log('Form data updated successfully');
+        log(response.toString());
         return true;
       } else {
-        log('Failed to update data. Status code: ${response.statusCode}');
-        return false;
+        log('Failed to update form data. Status code: ${response.statusCode}');
+        throw false;
       }
     } catch (e) {
-      throw Exception("Failed to Upload data");
+      throw Exception(e.toString());
     }
   }
 }

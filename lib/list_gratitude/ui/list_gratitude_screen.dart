@@ -100,7 +100,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
               child: CircularProgressIndicator.adaptive(),
             );
           } else if (state is ListGratitudeSuccessState) {
-            gratitudeList = state.listGratitudeModel!.gg!;
+            gratitudeList = state.listGratitudeModel!.gg!.reversed.toList();
             return Column(
               children: [
                 EasyDateTimeLine(
