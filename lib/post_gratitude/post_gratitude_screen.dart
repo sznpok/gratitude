@@ -187,20 +187,29 @@ class _PostGratitudeScreenState extends State<PostGratitudeScreen> {
                         )
                       : ElevatedButton(
                           onPressed: () async {
-                            if (_image == null) {
-                              BlocProvider.of<PostGratitudeBloc>(context).add(
-                                OnPostGratitudeEvent(
-                                  titleController.text,
-                                  "",
-                                ),
-                              );
+                            if (_image != null ||
+                                titleController.text.isNotEmpty) {
+                              if (_image == null) {
+                                BlocProvider.of<PostGratitudeBloc>(context).add(
+                                  OnPostGratitudeEvent(
+                                    titleController.text,
+                                    "",
+                                  ),
+                                );
+                              } else {
+                                BlocProvider.of<PostGratitudeBloc>(context).add(
+                                  OnPostGratitudeEvent(
+                                    titleController.text,
+                                    _image!.path,
+                                  ),
+                                );
+                              }
                             } else {
-                              String image = convertToBase64(_image!);
-                              log(image.length.toString());
-                              BlocProvider.of<PostGratitudeBloc>(context).add(
-                                OnPostGratitudeEvent(
-                                  titleController.text,
-                                  image,
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      "please Either enter text or choose image"),
+                                  backgroundColor: Colors.red,
                                 ),
                               );
                             }

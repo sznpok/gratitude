@@ -342,14 +342,14 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                             )
                           : ElevatedButton(
                               onPressed: () async {
-                                String image = _image != null
-                                    ? convertToBase64(_image!)
+                                String? image = _image != null
+                                    ? _image!.path
                                     : widget.image;
                                 BlocProvider.of<UpdateGratitudeBloc>(context)
                                     .add(OnUpdateGratitudeEvent(
                                   widget.id,
                                   titleController.text,
-                                  image,
+                                  image!,
                                 ));
                               },
                               style: ElevatedButton.styleFrom(

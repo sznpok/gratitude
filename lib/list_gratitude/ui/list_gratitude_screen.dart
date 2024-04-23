@@ -101,7 +101,6 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
             );
           } else if (state is ListGratitudeSuccessState) {
             gratitudeList = state.listGratitudeModel!.gg!;
-
             return Column(
               children: [
                 EasyDateTimeLine(
@@ -116,6 +115,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             gratitudeDate)
                         .toList();
                     log(gratitudeList.length.toString());
+
                     (context as Element).markNeedsBuild();
                   },
                   activeColor: primaryColor,
