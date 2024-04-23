@@ -187,14 +187,23 @@ class _PostGratitudeScreenState extends State<PostGratitudeScreen> {
                         )
                       : ElevatedButton(
                           onPressed: () async {
-                            String image = convertToBase64(_image!);
-                            log(image.length.toString());
-                            BlocProvider.of<PostGratitudeBloc>(context).add(
-                              OnPostGratitudeEvent(
-                                titleController.text,
-                                image,
-                              ),
-                            );
+                            if (_image == null) {
+                              BlocProvider.of<PostGratitudeBloc>(context).add(
+                                OnPostGratitudeEvent(
+                                  titleController.text,
+                                  "",
+                                ),
+                              );
+                            } else {
+                              String image = convertToBase64(_image!);
+                              log(image.length.toString());
+                              BlocProvider.of<PostGratitudeBloc>(context).add(
+                                OnPostGratitudeEvent(
+                                  titleController.text,
+                                  image,
+                                ),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: secondaryColor,

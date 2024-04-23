@@ -21,8 +21,6 @@ class ListGratitudeScreen extends StatefulWidget {
 }
 
 class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
-  bool isLoading = false;
-
   String gratitudeDate = "";
 
   List<Gg> gratitudeList = [];
@@ -102,7 +100,6 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
               child: CircularProgressIndicator.adaptive(),
             );
           } else if (state is ListGratitudeSuccessState) {
-            isLoading = true;
             gratitudeList = state.listGratitudeModel!.gg!;
 
             return Column(
@@ -112,21 +109,14 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                   disabledDates: _calculateDisabledDates(),
                   onDateChange: (selectedDate) {
                     // Filter gratitudeList based on selected date
-                    if (isLoading) {
-                      gratitudeDate = selectedDate.toString();
-                      gratitudeList = state.listGratitudeModel!.gg!
-                          .where((gratitude) =>
-                              convertDateFormat(
-                                  gratitude.createdAt.toString()) ==
-                              gratitudeDate)
-                          .toList();
-                      log(gratitudeList.length.toString());
-                      (context as Element).markNeedsBuild();
-                    } else {
-                      gratitudeList = state.listGratitudeModel!.gg!;
-                      log(gratitudeList.length.toString());
-                      (context as Element).markNeedsBuild();
-                    }
+                    gratitudeDate = selectedDate.toString();
+                    gratitudeList = state.listGratitudeModel!.gg!
+                        .where((gratitude) =>
+                            convertDateFormat(gratitude.createdAt.toString()) ==
+                            gratitudeDate)
+                        .toList();
+                    log(gratitudeList.length.toString());
+                    (context as Element).markNeedsBuild();
                   },
                   activeColor: primaryColor,
                   dayProps: const EasyDayProps(
@@ -153,9 +143,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             SizeConfig.padding! * 0.01,
                           ),
                           itemBuilder: (context, i) {
-                            final data = !isLoading
-                                ? gratitudeList
-                                : state.listGratitudeModel!.gg!;
+                            final data = gratitudeList;
                             return GestureDetector(
                               child: CustomListCard(
                                 title: data[i].title!,

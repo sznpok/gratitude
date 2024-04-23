@@ -19,6 +19,8 @@ class PostGratitudeRepo {
       parameter: jsonEncode(body),
     );
     try {
+      log(response.body);
+      log(response.statusCode.toString());
       if (response.statusCode == 201) {
         log(response.body.toString());
         log("success");

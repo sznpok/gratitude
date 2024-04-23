@@ -139,6 +139,12 @@ class _DetailGratitudeScreenState extends State<DetailGratitudeScreen> {
                           fit: BoxFit.cover,
                           height: SizeConfig.screenHeight! * 0.5,
                           width: SizeConfig.screenWidth!,
+                          errorWidget: (context, str, obj) {
+                            return Image.asset(
+                              "images/gratitude.png",
+                              color: primaryColor,
+                            );
+                          },
                         )
                       : Image.file(_image!),
                 ),
