@@ -32,32 +32,33 @@ class UpdateGratitudeRepo {
       throw Exception(e.toString());
     }
   }*/
+
   Future<bool> update({
+    String? id,
     String? text,
-    String? imageUrl,
-    String? id, // Changed from imagePath to imageUrl
+    String? imagePath,
   }) async {
     var request =
-        http.MultipartRequest('PATCH', Uri.parse("${Api.gratitudeUrl}/$id"));
+        http.MultipartRequest('PATCH', Uri.parse('${Api.gratitudeUrl}/$id'));
     try {
       if (text != null) {
         request.fields['title'] = text;
       }
-      if (imageUrl != null) {
-        // Download the image from the URL
-        var response = await http.get(Uri.parse(imageUrl));
-        if (response.statusCode == 200) {
-          // Create a temporary file to store the downloaded image
-          var tempDir = await getTemporaryDirectory();
-          var tempFile = File('${tempDir.path}/temp_image.jpg');
-          await tempFile.writeAsBytes(response.bodyBytes);
-
-          // Add the downloaded image to the request
-          var image =
-              await http.MultipartFile.fromPath('profile', tempFile.path);
-          request.files.add(image);
+      if (imagePath != null) {
+        if (imagePath.startsWith('http')) {
+          // If imagePath is a URL, download the image and upload it
+          var response = await http.get(Uri.parse(imagePath));
+          if (response.statusCode == 200) {
+            var image = http.MultipartFile.fromString('profile', response.body);
+            request.files.add(image);
+          } else {
+            throw Exception('Failed to download image');
+          }
         } else {
-          throw Exception('Failed to download image');
+          // If imagePath is a local file path, upload the file directly
+          var file = File(imagePath);
+          var image = await http.MultipartFile.fromPath('profile', file.path);
+          request.files.add(image);
         }
       }
       request.headers['Authorization'] = 'Bearer ${AccessToken.tokenAccess}';
