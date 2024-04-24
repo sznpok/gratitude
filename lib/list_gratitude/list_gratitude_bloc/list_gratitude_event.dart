@@ -4,11 +4,9 @@ part of 'list_gratitude_bloc.dart';
 sealed class ListGratitudeEvent extends Equatable {}
 
 class LoadingListGratitudeEvent extends ListGratitudeEvent {
-  final String date;
-
-  LoadingListGratitudeEvent(this.date);
+  LoadingListGratitudeEvent();
 
   @override
   // TODO: implement props
-  List<Object?> get props => [date];
+  List<Object?> get props => [];
 }

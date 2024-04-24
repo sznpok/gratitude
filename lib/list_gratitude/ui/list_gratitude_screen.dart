@@ -30,7 +30,7 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
     DateTime currentDate = DateTime.now();
     gratitudeDate = currentDate.toString();
     BlocProvider.of<ListGratitudeBloc>(context)
-        .add(LoadingListGratitudeEvent(gratitudeDate));
+        .add(LoadingListGratitudeEvent());
     super.initState();
   }
 
@@ -107,7 +107,6 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                   initialDate: DateTime.now(),
                   disabledDates: _calculateDisabledDates(),
                   onDateChange: (selectedDate) {
-                    // Filter gratitudeList based on selected date
                     gratitudeDate = selectedDate.toString();
                     gratitudeList = state.listGratitudeModel!.gg!
                         .where((gratitude) =>
@@ -115,7 +114,6 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             gratitudeDate)
                         .toList();
                     log(gratitudeList.length.toString());
-
                     (context as Element).markNeedsBuild();
                   },
                   activeColor: primaryColor,

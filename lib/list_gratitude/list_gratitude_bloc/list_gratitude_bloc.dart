@@ -21,7 +21,7 @@ class ListGratitudeBloc extends Bloc<ListGratitudeEvent, ListGratitudeState> {
     ListGratitudeRepo repo = ListGratitudeRepo();
     final result = await repo.gratitudeRepo();
     if (result.gg!.isNotEmpty) {
-      emit(ListGratitudeSuccessState(result, event.date));
+      emit(ListGratitudeSuccessState(result));
     } else {
       emit(ListGratitudeErrorState(result.toString()));
     }

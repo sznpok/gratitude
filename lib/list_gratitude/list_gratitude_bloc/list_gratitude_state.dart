@@ -11,13 +11,16 @@ final class ListGratitudeInitial extends ListGratitudeState {
 
 final class ListGratitudeSuccessState extends ListGratitudeState {
   final ListGratitudeModel? listGratitudeModel;
-  final String date;
 
-  ListGratitudeSuccessState(this.listGratitudeModel, this.date);
+  ListGratitudeSuccessState(
+    this.listGratitudeModel,
+  );
 
   @override
   // TODO: implement props
-  List<Object?> get props => [listGratitudeModel, date];
+  List<Object?> get props => [
+        listGratitudeModel,
+      ];
 }
 
 final class ListGratitudeErrorState extends ListGratitudeState {
