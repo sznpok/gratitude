@@ -6,6 +6,7 @@ import 'package:gratitude_app/detail_gratitude/ui/detail_gratitude_screen.dart';
 import 'package:gratitude_app/list_gratitude/ui/custom_list_card.dart';
 import 'package:gratitude_app/list_gratitude/list_gratitude_bloc/list_gratitude_bloc.dart';
 import 'package:gratitude_app/profile/profile_screen.dart';
+import 'package:gratitude_app/utils/api_url.dart';
 import 'package:gratitude_app/utils/convert_date.dart';
 import 'package:intl/intl.dart';
 import '../../post_gratitude/post_gratitude_screen.dart';
@@ -43,6 +44,14 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
       disabledDates.add(i);
     }
     return disabledDates;
+  }
+
+  List<Gg> gratitudeDataList(List<Gg> data) {
+    for (int i = 0; i < data.length; i++) {
+      gratitudeList.add(data[i]);
+    }
+    log(gratitudeList.length.toString());
+    return gratitudeList;
   }
 
   @override
@@ -100,7 +109,11 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
               child: CircularProgressIndicator.adaptive(),
             );
           } else if (state is ListGratitudeSuccessState) {
-            gratitudeList = state.listGratitudeModel!.gg!.reversed.toList();
+            //gratitudeDataList(state.listGratitudeModel!.gg!);
+            if (gratitudeList.isEmpty) {
+              gratitudeList = state.listGratitudeModel!.gg!;
+            }
+
             return Column(
               children: [
                 EasyDateTimeLine(
@@ -113,7 +126,13 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             convertDateFormat(gratitude.createdAt.toString()) ==
                             gratitudeDate)
                         .toList();
-                    log(gratitudeList.length.toString());
+
+                    if (gratitudeList.isEmpty ||
+                        gratitudeList.any((gratitude) =>
+                            convertDateFormat(gratitude.createdAt.toString()) !=
+                            gratitudeDate)) {
+                      gratitudeList.clear();
+                    }
                     (context as Element).markNeedsBuild();
                   },
                   activeColor: primaryColor,
@@ -141,15 +160,14 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             SizeConfig.padding! * 0.01,
                           ),
                           itemBuilder: (context, i) {
-                            final data = gratitudeList;
                             return GestureDetector(
                               child: CustomListCard(
-                                title: data[i].title!,
-                                image: data[i].profile!.url!,
+                                title: gratitudeList[i].title!,
+                                image: gratitudeList[i].profile!.url!,
                               ),
                               onTap: () {
                                 DateTime initialDate =
-                                    DateTime.parse(data[i].createdAt!);
+                                    DateTime.parse(gratitudeList[i].createdAt!);
                                 String finalDateString =
                                     DateFormat('MMMM d, yyyy')
                                         .format(initialDate);
@@ -159,9 +177,9 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DetailGratitudeScreen(
-                                      title: data[i].title.toString(),
-                                      id: data[i].sId!,
-                                      image: data[i].profile!.url,
+                                      title: gratitudeList[i].title.toString(),
+                                      id: gratitudeList[i].sId!,
+                                      image: gratitudeList[i].profile!.url,
                                       date: finalDateString,
                                     ),
                                   ),
