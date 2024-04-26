@@ -6,7 +6,6 @@ import 'package:gratitude_app/detail_gratitude/ui/detail_gratitude_screen.dart';
 import 'package:gratitude_app/list_gratitude/ui/custom_list_card.dart';
 import 'package:gratitude_app/list_gratitude/list_gratitude_bloc/list_gratitude_bloc.dart';
 import 'package:gratitude_app/profile/profile_screen.dart';
-import 'package:gratitude_app/utils/api_url.dart';
 import 'package:gratitude_app/utils/convert_date.dart';
 import 'package:intl/intl.dart';
 import '../../post_gratitude/post_gratitude_screen.dart';
@@ -23,8 +22,8 @@ class ListGratitudeScreen extends StatefulWidget {
 
 class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
   String gratitudeDate = "";
-
   List<Gg> gratitudeList = [];
+  bool noDataForSelectedDate = false;
 
   @override
   void initState() {
@@ -44,14 +43,6 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
       disabledDates.add(i);
     }
     return disabledDates;
-  }
-
-  List<Gg> gratitudeDataList(List<Gg> data) {
-    for (int i = 0; i < data.length; i++) {
-      gratitudeList.add(data[i]);
-    }
-    log(gratitudeList.length.toString());
-    return gratitudeList;
   }
 
   @override
@@ -85,31 +76,10 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
       body: BlocBuilder<ListGratitudeBloc, ListGratitudeState>(
         builder: (context, state) {
           if (state is ListGratitudeErrorState) {
-            return Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "images/nodatafound.png",
-                    fit: BoxFit.fitWidth,
-                    width: SizeConfig.screenWidth! * 0.3,
-                  ),
-                  Text(
-                    "No Data Found !!!",
-                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                          color: primaryColor,
-                        ),
-                  ),
-                ],
-              ),
-            );
+            return _buildNoDataFound();
           } else if (state is ListGratitudeLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator.adaptive(),
-            );
+            return _buildLoadingIndicator();
           } else if (state is ListGratitudeSuccessState) {
-            //gratitudeDataList(state.listGratitudeModel!.gg!);
             if (gratitudeList.isEmpty) {
               gratitudeList = state.listGratitudeModel!.gg!;
             }
@@ -127,11 +97,10 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                             gratitudeDate)
                         .toList();
 
-                    if (gratitudeList.isEmpty ||
-                        gratitudeList.any((gratitude) =>
-                            convertDateFormat(gratitude.createdAt.toString()) !=
-                            gratitudeDate)) {
-                      gratitudeList.clear();
+                    if (gratitudeList.isEmpty) {
+                      noDataForSelectedDate = true;
+                    } else {
+                      noDataForSelectedDate = false;
                     }
                     (context as Element).markNeedsBuild();
                   },
@@ -145,16 +114,16 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                     ),
                   ),
                   timeLineProps: const EasyTimeLineProps(
-                    hPadding: 8.0, // padding from left and right
-                    separatorPadding: 12.0, // padding between days
+                    hPadding: 8.0,
+                    separatorPadding: 12.0,
                   ),
                 ),
                 SizedBox(
                   height: SizeConfig.screenHeight! * 0.01,
                 ),
-                gratitudeList.isNotEmpty
-                    ? Expanded(
-                        child: ListView.builder(
+                Expanded(
+                  child: !noDataForSelectedDate
+                      ? ListView.builder(
                           itemCount: gratitudeList.length,
                           padding: EdgeInsets.all(
                             SizeConfig.padding! * 0.01,
@@ -187,71 +156,13 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
                               },
                             );
                           },
-                        ),
-                      )
-                    : Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              "images/nodatafound.png",
-                              fit: BoxFit.fitWidth,
-                              width: SizeConfig.screenWidth! * 0.3,
-                            ),
-                            Text(
-                              "No Data Found !!!",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    color: primaryColor,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                /*Expanded(
-                  child: ListView.builder(
-                    itemCount: state.listGratitudeModel!.gg!.length,
-                    padding: EdgeInsets.all(
-                      SizeConfig.padding! * 0.01,
-                    ),
-                    itemBuilder: (context, i) {
-                      return GestureDetector(
-                        child: CustomListCard(
-                          title:
-                              state.listGratitudeModel!.gg![i].title.toString(),
-                          image: state.listGratitudeModel!.gg![i].profile!.url!,
-                        ),
-                        onTap: () {
-                          final String date = convertDateFormat(state
-                              .listGratitudeModel!.gg![i].createdAt
-                              .toString());
-                          log(date.toString());
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailGratitudeScreen(
-                                title: state.listGratitudeModel!.gg![i].title
-                                    .toString(),
-                                id: state.listGratitudeModel!.gg![i].sId!,
-                                image: state
-                                    .listGratitudeModel!.gg![i].profile!.url,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),*/
+                        )
+                      : _buildNoDataFound(),
+                ),
               ],
             );
           }
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
+          return _buildLoadingIndicator();
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -271,6 +182,34 @@ class _ListGratitudeScreenState extends State<ListGratitudeScreen> {
           color: Colors.white,
         ),
       ),
+    );
+  }
+
+  Widget _buildNoDataFound() {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            "images/nodatafound.png",
+            fit: BoxFit.fitWidth,
+            width: SizeConfig.screenWidth! * 0.3,
+          ),
+          Text(
+            "No Data Found !!!",
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  color: primaryColor,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Center(
+      child: CircularProgressIndicator.adaptive(),
     );
   }
 }
